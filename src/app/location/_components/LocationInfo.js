@@ -1,4 +1,5 @@
 import Image from "next/image";
+import Link from "next/link";
 
 function TopSection({ location }) {
   return (
@@ -30,7 +31,7 @@ function TopSection({ location }) {
 
 function BottomSection({ location }) {
   return (
-    <div className="flex flex-col gap-4">
+    <address className="flex flex-col gap-4 not-italic">
       <ul className="flex flex-wrap gap-2">
         <ul className="basis-full flex">
           <li>
@@ -39,7 +40,9 @@ function BottomSection({ location }) {
           </li>
           <li className="ml-auto">
             <span className="font-semibold capitalize">links: </span>
-            {location.url}
+            <a href={`http://${location.url}`} target="_blank">
+              {location.url}
+            </a>
           </li>
         </ul>
         <li>
@@ -52,7 +55,7 @@ function BottomSection({ location }) {
         <br></br>
         {location.description}
       </p>
-    </div>
+    </address>
   );
 }
 
