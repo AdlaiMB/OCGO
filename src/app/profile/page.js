@@ -66,7 +66,7 @@ export default function Page() {
   return (
     <div
       id="profile-page"
-      className="mx-[138px] h-screen border-2 flex flex-col py-[5%] gap-[15%]"
+      className="mx-[138px] h-screen flex flex-col py-[5%] gap-[15%]"
     >
       <ProfileInfo user={user} />
       <ProfilePosts postLists={postLists} />
