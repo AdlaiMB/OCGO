@@ -15,10 +15,9 @@ export default function LocationCard({ location }) {
         </Link>
         <menu className="flex gap-4">
           <li>
-            <button>edit</button>
-          </li>
-          <li>
-            <button>delete</button>
+            <button className="cursor-pointer py-0.5 px-1 bg-black text-white text-xs">
+              edit
+            </button>
           </li>
         </menu>
       </div>
