@@ -10,7 +10,10 @@ export default function LocationCard({ location }) {
   return (
     <div className="flex flex-col gap-1 bg-white text-black w-full py-[0.25em] px-[0.5em]">
       <div className="flex justify-between">
-        <Link href="/" className="font-semibold capitalize">
+        <Link
+          href={`/location/${location.id}`}
+          className="font-semibold capitalize"
+        >
           {location.name}
         </Link>
         <menu className="flex gap-4">

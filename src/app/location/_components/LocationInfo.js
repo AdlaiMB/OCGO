@@ -4,7 +4,7 @@ function TopSection({ location }) {
   return (
     <div className="flex flex-col gap-2">
       <div className="flex items-center">
-        <h1 className="text-4xl font-bold">{location.name}</h1>
+        <h1 className="text-4xl font-bold capitalize">{location.name}</h1>
         <div className="ml-auto flex gap-1">
           <span className="py-[0.25em] px-[0.25em] bg-white text-black text-sm capitalize">
             {location.city}
@@ -22,7 +22,7 @@ function TopSection({ location }) {
         height={150}
       />
       <span className="font-medium text-sm text-gray-200">
-        @{location.authorUsername}
+        @{location.username}
       </span>
     </div>
   );
@@ -39,14 +39,14 @@ function BottomSection({ location }) {
           </li>
           <li className="ml-auto">
             <span className="font-semibold capitalize">links: </span>
-            <a href={`http://${location.url}`} target="_blank">
-              {location.url}
+            <a href={`http://${location.links[0].url}`} target="_blank">
+              {location.links[0].url}
             </a>
           </li>
         </ul>
         <li>
-          <span className="font-semibold capitalize">hours: </span>Monday: 10 am
-          - 8 pm
+          <span className="font-semibold capitalize">hours: </span>
+          {`${location.hours[0].day}: ${location.hours[0].open} - ${location.hours[0].close}`}
         </li>
       </ul>
       <p>

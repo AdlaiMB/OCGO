@@ -29,7 +29,7 @@ export default function CommentCard({ comment }) {
     <div className="flex flex-col gap-1 bg-white text-black w-full py-[0.25em] px-[0.5em]">
       <div className="flex justify-between">
         <Link
-          href={`/location/${comment.id}`}
+          href={`/location/${comment.location_id}`}
           className="font-semibold capitalize"
         >
           {comment.locationname}
