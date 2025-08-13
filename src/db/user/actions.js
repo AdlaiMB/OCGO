@@ -1,4 +1,5 @@
 "use server";
+import { redirect } from "next/navigation";
 import sql from "../db.js";
 
 // create operations
@@ -17,10 +18,16 @@ export async function getUser(username) {
 }
 
 // update operations
-export async function updateUserBio(username, updatedBio) {
+export async function updateUser(prevState, formData) {
+  const oldUsername = formData.get("old_username");
+  const updatedUsername = formData.get("username");
+  const updatedBio = formData.get("bio");
+
   await sql`UPDATE public.user
-            SET bio = ${updatedBio} 
-            WHERE username = ${username}`;
+            SET bio = ${updatedBio}, username = ${updatedUsername} 
+            WHERE username = ${oldUsername}`;
+
+  redirect(`/profile/${updatedUsername}`);
 }
 
 // delete operations

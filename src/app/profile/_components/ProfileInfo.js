@@ -1,4 +1,5 @@
 import Image from "next/image";
+import Link from "next/link";
 
 export default function ProfileInfo({ user }) {
   return (
@@ -11,9 +12,12 @@ export default function ProfileInfo({ user }) {
         </hgroup>
         <menu className="flex gap-4">
           <li>
-            <button className="px-[1.14em] py-[0.57em] bg-gray-800 hover:bg-gray-400 cursor-pointer transition-colors capitalize text-sm">
+            <Link
+              href={`/update/profile/${user.username}`}
+              className="px-[1.14em] py-[0.57em] bg-gray-800 hover:bg-gray-400 cursor-pointer transition-colors capitalize text-sm"
+            >
               edit
-            </button>
+            </Link>
           </li>
           <li>
             <button className="px-[1.14em] py-[0.57em] bg-gray-800 hover:bg-gray-400 cursor-pointer transition-colors capitalize text-sm">
