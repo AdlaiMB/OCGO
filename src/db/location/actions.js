@@ -3,6 +3,54 @@ import sql from "../db.js";
 import { redirect } from "next/navigation";
 
 // create operations
+export async function createLocation(prevState, formData) {
+  const name = formData.get("name");
+  const address = formData.get("address");
+  const link = formData.get("link");
+  const city = formData.get("city");
+  const category = formData.get("category");
+  const username = "admin";
+  const description = formData.get("description");
+
+  const [location] =
+    await sql`INSERT INTO public.location(username, name, address, city, category, description)
+              VALUES (${username}, ${name}, ${address}, ${city}, ${category}, ${description})
+              RETURNING id`;
+
+  const locationId = location.id;
+  const days = [
+    "monday",
+    "tuesday",
+    "wednesday",
+    "thursday",
+    "friday",
+    "saturday",
+    "sunday",
+  ];
+
+  await sql.transaction((txn) => {
+    const queries = [];
+
+    for (const day of days) {
+      const [open, close] = formData.getAll(day);
+
+      if (open == "" || close == " ") {
+        continue;
+      }
+
+      queries.push(txn`INSERT INTO public.hour(location_id, day, open, close)
+                       VALUES (${locationId}, ${day}, ${open}, ${close})`);
+    }
+
+    queries.push(txn`INSERT INTO public.url(location_id, url)
+                     VALUES (${locationId}, ${link})`);
+
+    return queries;
+  });
+
+  redirect(`/location/${locationId}`);
+}
+
 // read operations
 export async function getLocationById(id) {
   const [location, hours, links] = await sql.transaction((txn) => [
