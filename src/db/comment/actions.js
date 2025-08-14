@@ -4,6 +4,18 @@ import sql from "../db.js";
 import { redirect } from "next/navigation";
 
 // create operations
+export async function createComment(prevState, formData) {
+  const comment = formData.get("comment");
+  const username = "admin";
+  const locationId = 2;
+
+  const [newComment] =
+    await sql`INSERT INTO public.comment(username, location_id, comment)
+            VALUES (${username}, ${locationId}, ${comment})
+            RETURNING location_id, id`;
+
+  redirect(`/location/${newComment.location_id}#${newComment.id}`);
+}
 
 // read operations
 export async function getCommentById(commentId) {
