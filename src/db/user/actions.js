@@ -3,10 +3,15 @@ import { redirect } from "next/navigation";
 import sql from "../db.js";
 
 // create operations
-export async function createUser(username, bio) {
-  const rows =
-    await sql`INSERT INTO public.user(username, password, bio) VALUES ('new_user', '000', 'this is a test') RETURNING username`;
-  return rows[0];
+export async function createUser(prevState, formData) {
+  const username = formData.get("username");
+  const password = formData.get("password");
+  const bio = formData.get("bio");
+
+  const [user] =
+    await sql`INSERT INTO public.user(username, password, bio) VALUES (${username}, ${password}, ${bio}) RETURNING username`;
+
+  redirect(`/profile/${user.username}`);
 }
 
 // read opeartions
