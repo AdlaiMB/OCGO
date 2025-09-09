@@ -1,0 +1,72 @@
+"use client";
+
+import Link from "next/link";
+import { useState } from "react";
+
+export default function ProfileHeader({ name, bio, isSessionUsersProfile }) {
+  const [modalDisplay, setModalDisplay] = useState(false);
+
+  const handleDeleteClick = () => {
+    alert(
+      "this button will delete the account. feature needs to be implemented"
+    );
+    setModalDisplay(false);
+  };
+
+  return (
+    <div
+      id="ProfileHeader"
+      className="flex flex-row items-center justify-between"
+    >
+      <div id="ProfileImg">
+        <div className="text-5xl flex items-center justify-center rounded-full w-[150px] h-[150px] bg-gray-400">
+          {name?.[0]}
+        </div>
+      </div>
+      <div id="ProfileContent" className="w-[75%]">
+        <div id="ProfileInfo">
+          <h1 className="text-3xl">{name}</h1>
+          <p className="text-base">{bio}</p>
+        </div>
+        {isSessionUsersProfile && (
+          <div
+            id="ProfileActions"
+            className="relative flex flex-row gap-2 mt-4"
+          >
+            <Link
+              href="/update/profile"
+              className="text-sm rounded-sm px-2 py-1 transition-colors bg-slate-600 hover:bg-slate-500 cursor-pointer"
+            >
+              Edit
+            </Link>
+            <button
+              onClick={() => setModalDisplay(!modalDisplay)}
+              className="text-sm rounded-sm px-2 py-1 transition-colors bg-slate-600 hover:bg-slate-500 cursor-pointer"
+            >
+              Delete
+            </button>
+            {modalDisplay && (
+              <div className="w-[300px] p-0.5 z-10 absolute left-0 top-9 rounded-sm text-black bg-white">
+                <p>are you sure you want to delete the account.</p>
+                <div className="flex gap-1">
+                  <button
+                    onClick={() => handleDeleteClick()}
+                    className="rounded-sm px-2 py-1 transition-colors bg-green-800 hover:bg-green-500 cursor-pointer"
+                  >
+                    yes
+                  </button>
+                  <button
+                    onClick={() => setModalDisplay(false)}
+                    className="rounded-sm px-2 py-1 transition-colors bg-red-800 hover:bg-red-500 cursor-pointer"
+                  >
+                    no
+                  </button>
+                </div>
+              </div>
+            )}
+          </div>
+        )}
+      </div>
+    </div>
+  );
+}

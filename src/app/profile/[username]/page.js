@@ -1,0 +1,41 @@
+import { auth } from "@/auth";
+import {
+  getUserByUsername,
+  getAbstractLocationsByUserId,
+  getAbstractCommentsByUserId,
+} from "@/lib/dal";
+
+import ProfileHeader from "../_components/ProfileHeader";
+import ProfilePosts from "../_components/ProfilePosts";
+
+export default async function Page({ params }) {
+  const { username } = await params;
+  const { user_id, name, bio } = await getUserByUsername(username);
+  const locations = await getAbstractLocationsByUserId(user_id);
+  const comments = await getAbstractCommentsByUserId(user_id);
+
+  const session = await auth();
+  const sessionUserID = session ? session.user.id : null;
+
+  // security
+  // check session user ownership of profile page
+  const isProfileOwner = sessionUserID === user_id;
+
+  return (
+    <div
+      id="Profile"
+      className="flex flex-col gap-10 max-w-[1700px] px-10 mx-auto"
+    >
+      <ProfileHeader
+        name={name}
+        bio={bio}
+        isSessionUsersProfile={isProfileOwner}
+      />
+      <ProfilePosts
+        locations={locations}
+        comments={comments}
+        isSessionUsersProfile={isProfileOwner}
+      />
+    </div>
+  );
+}
