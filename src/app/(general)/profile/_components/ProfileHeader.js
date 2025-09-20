@@ -16,17 +16,17 @@ export default function ProfileHeader({ name, bio, isSessionUsersProfile }) {
   return (
     <div
       id="ProfileHeader"
-      className="flex flex-row items-center justify-between"
+      className="posts-container flex-row items-center justify-between"
     >
       <div id="ProfileImg">
-        <div className="text-5xl flex items-center justify-center rounded-full w-[150px] h-[150px] bg-gray-400">
+        <div className="text-5xl flex items-center justify-center rounded-full w-[150px] h-[150px] border border-[#333333]">
           {name?.[0]}
         </div>
       </div>
       <div id="ProfileContent" className="w-[75%]">
         <div id="ProfileInfo">
-          <h1 className="text-3xl">{name}</h1>
-          <p className="text-base">{bio}</p>
+          <h1 className="text-3xl font-medium">{name}</h1>
+          <p className="text-base font-normal">{bio}</p>
         </div>
         {isSessionUsersProfile && (
           <div
@@ -35,15 +35,15 @@ export default function ProfileHeader({ name, bio, isSessionUsersProfile }) {
           >
             <Link
               href="/update/profile"
-              className="text-sm rounded-sm px-2 py-1 transition-colors bg-slate-600 hover:bg-slate-500 cursor-pointer"
+              className="btn text-sm rounded-sm px-4 py-2 transition-colors"
             >
-              Edit
+              edit
             </Link>
             <button
               onClick={() => setModalDisplay(!modalDisplay)}
-              className="text-sm rounded-sm px-2 py-1 transition-colors bg-slate-600 hover:bg-slate-500 cursor-pointer"
+              className="btn text-sm rounded-sm px-4 py-2 transition-colors"
             >
-              Delete
+              delete
             </button>
             {modalDisplay && (
               <div className="w-[300px] p-0.5 z-10 absolute left-0 top-9 rounded-sm text-black bg-white">

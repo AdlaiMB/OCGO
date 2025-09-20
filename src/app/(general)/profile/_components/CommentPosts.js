@@ -25,8 +25,8 @@ export default function CommentPosts({
 
   return (
     <div id="CommentPosts" className="basis-full">
-      <h2 className="text-xl">Comments</h2>
-      <div id="Comments" className="flex flex-col gap-2 mt-4">
+      <h2 className="text-xl">comments</h2>
+      <div id="Comments" className="posts-container gap-2 mt-4">
         {comments.map((comment) => (
           <CommentCard
             onDeleteClick={handleDeleteComment}

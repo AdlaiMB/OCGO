@@ -24,7 +24,7 @@ export default async function Page({ params }) {
   return (
     <div
       id="Profile"
-      className="flex flex-col gap-10 max-w-[1700px] px-10 mx-auto"
+      className="flex flex-col gap-10 max-w-[1700px] px-10 mt-14 mx-auto"
     >
       <ProfileHeader
         name={name}
