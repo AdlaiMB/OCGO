@@ -1,5 +1,7 @@
 import "server-only";
 
+import { redirect } from "next/navigation";
+
 import sql from "@/db";
 import { auth } from "@/auth";
 
@@ -7,10 +9,23 @@ export const verifySession = async () => {
   const session = await auth();
 
   if (!session) {
-    redirect("/api/auth/signin");
+    redirect("/signin");
   }
 
   return session.user;
+};
+
+export const getUserByUserId = async (userId) => {
+  try {
+    const [user] = await sql`SELECT name, bio
+                             FROM Users 
+                             WHERE user_id=${userId}`;
+    return user ? user : {};
+  } catch (error) {
+    console.log("Error: Failed to fetch user.");
+    console.log(error);
+    return null;
+  }
 };
 
 export const getUserByUsername = async (username) => {
@@ -100,7 +115,7 @@ export const getCommentsByLocationId = async (locationId) => {
 export const getSearchAbstractLocations = async () => {
   try {
     const locations =
-      await sql`SELECT user_id, location_id, username, name, city, category, address
+      await sql`SELECT user_id, location_id, user_name, location_name, city, category, address
                 FROM location_info`;
     return locations;
   } catch (error) {

@@ -5,11 +5,11 @@ const userSchema = z.strictObject({
   username: z.string().min(1).max(15).trim(),
   password: z
     .string()
-    .min(10)
-    .max(16)
-    .regex(/[a-z]/, { error: "Contain at least one lowercase letter." })
-    .regex(/[A-Z]/, { error: "Contain at least one uppercase letter." })
-    .regex(/[0-9]/, { error: "Contain at least one number." })
+    .min(10, { error: "Must be of a minimum 10 charcters long." })
+    .max(16, { error: "Must be shorter than 16 characters." })
+    .regex(/[a-z]/, { error: "Must contain at least one lowercase letter." })
+    .regex(/[A-Z]/, { error: "Must contain at least one uppercase letter." })
+    .regex(/[0-9]/, { error: "Must contain at least one number." })
     .regex(/[^a-zA-Z0-9]/, {
       error: "Contain at least one special character.",
     })
@@ -102,11 +102,30 @@ export const updateLocationFormSchema = locationSchema.partial({
   url: true,
 });
 
-export const signInFormSchema = z.strictObject({
-  username: z.string().trim(),
-  password: z.string().trim(),
-});
+export const signInFormSchema = userSchema.omit({ bio: true });
 
 export const IDSchema = z.strictObject({
   id: z.string().regex(/^[0-9]+$/),
 });
+
+export const UsernameSchema = z.strictObject({
+  name: z.string().min(1).max(15).trim(),
+});
+
+export const createErrorMessage = (errors) => {
+  const e = new Set();
+  let message = "Invalid data in the";
+
+  for (const error of errors) {
+    const path = error.path[0];
+
+    if (e.has(path)) {
+      continue;
+    }
+
+    e.add(path);
+    message = message.concat(" ", `${path} field,`);
+  }
+
+  return message.concat(" ", "resolve the invalid fields.");
+};

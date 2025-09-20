@@ -1,5 +1,6 @@
 "use server";
 
+import { signIn } from "@/auth";
 import sql from "@/db";
 import { verifySession, getCommentOwnerId, getLocationOwnerId } from "./dal";
 import {
@@ -10,10 +11,33 @@ import {
   hourSchema,
   commentSchema,
   voteSchema,
+  createErrorMessage,
 } from "./definitions";
 
-export const serverActionCreateUser = async (prevState, formData) => {
-  // one-tier security
+import { AuthError } from "next-auth";
+
+export const serverActionSignIn = async (prevState, formData) => {
+  try {
+    await signIn("credentials", {
+      username: formData.get("username"),
+      password: formData.get("password"),
+      redirect: false,
+    });
+
+    return { success: true, name: formData.get("username") };
+  } catch (error) {
+    if (error instanceof AuthError) {
+      return { success: false, error: "Invalid credentials." };
+    }
+    return {
+      success: false,
+      error: "An issue has occured during sing in, try again.",
+    };
+  }
+};
+
+export const serverActionSignUp = async (prevState, formData) => {
+  // 2-tier security
   // 1st check: validate form data
   const validatedForm = signUpUserFormSchema.safeParse({
     username: formData.get("username"),
@@ -23,25 +47,60 @@ export const serverActionCreateUser = async (prevState, formData) => {
 
   if (!validatedForm.success) {
     console.log(
-      "Validation Error: @serverActionCreateUser - ",
+      "Validation Error: @serverActionSignUp - ",
       validatedForm.error
     );
-    return null;
+    const errorMessage = createErrorMessage(validatedForm.error.issues);
+    return {
+      success: false,
+      error: errorMessage,
+    };
   }
 
   const { username, password, bio } = validatedForm.data;
 
-  // hash the password
+  // 2nd check: check for existing user
+  try {
+    const [existingUser] = await sql`SELECT name
+                                   FROM Users
+                                   WHERE name=${username}`;
 
+    if (existingUser) {
+      return {
+        success: false,
+        error: "A user with the provided username already exists.",
+      };
+    }
+  } catch (error) {
+    console.log(
+      "DB Error: @serverActionSignUp - Failed to check for existing user."
+    );
+    console.log(error);
+    return {
+      success: false,
+      error: "An issue has occured during sign up, try again.",
+    };
+  }
+
+  // hash password
   // db operation
   try {
     const [newUser] =
-      await sql`INSERT INTO Users (name, password, bio) VALUES (${username}, ${password}, ${bio}) RETURNING user_id`;
-    return newUser;
+      await sql`INSERT INTO Users (name, password, bio) VALUES (${username}, ${password}, ${bio}) RETURNING name`;
+    // create session
+    await signIn("credentials", {
+      username,
+      password,
+      redirect: false,
+    });
+    return { success: true, name: newUser.name };
   } catch (error) {
-    console.log("DB Error: @serverActionCreateUser - Failed to create user.");
+    console.log("DB Error: @serverActionSignUp - Failed to create user.");
     console.log(error);
-    return null;
+    return {
+      success: false,
+      error: "An issue has occured during sign up, try again.",
+    };
   }
 };
 
@@ -58,7 +117,7 @@ export const serverActionCreateComment = async (prevState, formData) => {
       "Validation Error: @serverActionCreateComment - ",
       validatedID.error
     );
-    return null;
+    return { success: false, error: "Invalid location id." };
   }
 
   const { id: location_id } = validatedID.data;
@@ -73,7 +132,11 @@ export const serverActionCreateComment = async (prevState, formData) => {
       "Validation Error: @serverActionCreateComment - ",
       validatedForm.error
     );
-    return null;
+    const errorMessage = createErrorMessage(validatedForm.error.issues);
+    return {
+      success: false,
+      error: errorMessage,
+    };
   }
 
   const { comment } = validatedForm.data;
@@ -84,13 +147,20 @@ export const serverActionCreateComment = async (prevState, formData) => {
       await sql`INSERT INTO Comments (user_id, location_id, comment)
                 VALUES (${session.id}, ${location_id}, ${comment})
                 RETURNING comment_id, location_id`;
-    return newComment;
+    return {
+      success: true,
+      location_id: newComment.location_id,
+      comment_id: newComment.comment_id,
+    };
   } catch (error) {
     console.log(
       "DB Error: @serverActionCreateComment - Failed to create comment."
     );
     console.log(error);
-    return null;
+    return {
+      success: false,
+      error: "An issue has occured during posting the comment, try again.",
+    };
   }
 };
 
@@ -115,7 +185,11 @@ export const serverActionCreateLocation = async (prevState, formData) => {
       "Validation Error: @serverActionCreateLocation - ",
       validatedForm.error
     );
-    return null;
+    const errorMessage = createErrorMessage(validatedForm.error.issues);
+    return {
+      success: false,
+      error: errorMessage,
+    };
   }
 
   const { name, city, category, address, url, description } =
@@ -154,7 +228,11 @@ export const serverActionCreateLocation = async (prevState, formData) => {
         "Validation Error: @serverActionCreateLocation - ",
         validatedData.error
       );
-      return null;
+      const errorMessage = createErrorMessage(validatedData.error.issues);
+      return {
+        success: false,
+        error: errorMessage,
+      };
     }
 
     validatedFormDays.push(validatedData.data);
@@ -180,13 +258,16 @@ export const serverActionCreateLocation = async (prevState, formData) => {
       return queries;
     });
 
-    return newLocation;
+    return { success: true, location_id: newLocation.location_id };
   } catch (error) {
     console.log(
       "DB Error: @serverActionCreateLocation - Failed to create location."
     );
     console.log(error);
-    return null;
+    return {
+      success: false,
+      error: "An issued occured creating the location, try again.",
+    };
   }
 };
 
@@ -203,7 +284,8 @@ export const serverActionCreateVote = async (commentId, newVote) => {
       "Validation Error: @serverActionCreateVote - ",
       validatedID.error
     );
-    return null;
+
+    return { success: false, error: "Invalid comment id." };
   }
 
   const { id: comment_id } = validatedID.data;
@@ -218,7 +300,7 @@ export const serverActionCreateVote = async (commentId, newVote) => {
       "Validation Error: @serverActionCreateVote - ",
       validatedForm.error
     );
-    return null;
+    return { success: false, error: "Invalid vote type." };
   }
 
   const { vote } = validatedForm.data;
@@ -228,11 +310,18 @@ export const serverActionCreateVote = async (commentId, newVote) => {
     const [newVote] = await sql`INSERT INTO Votes (user_id, comment_id, vote)
                                 VALUES (${session.id}, ${comment_id}, ${vote}) 
                                 RETURNING comment_id, vote`;
-    return newVote;
+    return {
+      success: true,
+      comment_id: newVote.comment_id,
+      vote: newVote.vote,
+    };
   } catch (error) {
     console.log("DB Error: @serverActionCreateVote - Failed to create vote.");
     console.log(error);
-    return null;
+    return {
+      success: true,
+      error: "An issue occured creating vote, try again.",
+    };
   }
 };
 
@@ -256,7 +345,9 @@ export const serverActionUpdateUser = async (prevState, formData) => {
       "Validation Error: @serverActionUpdateUser - ",
       validatedForm.error
     );
-    return null;
+
+    const errorMessage = createErrorMessage(validatedForm.error.issues);
+    return { success: false, error: errorMessage };
   }
 
   const { username, password, bio } = validatedForm.data;
@@ -272,13 +363,19 @@ export const serverActionUpdateUser = async (prevState, formData) => {
                              ${setClause}
                              WHERE user_id=${session.id}
                              RETURNING name`;
-    return user;
+    if (!user) {
+      throw new Error("No user exists with the provided user_id.");
+    }
+    return { success: true, name: user.name };
   } catch (error) {
     console.log(
       `DB Error: @serverActionUpdateUser - Failed to update user with user_id (${session.id}).`
     );
     console.log(error);
-    return null;
+    return {
+      success: false,
+      error: "An issues occured updating user, try again.",
+    };
   }
 };
 
@@ -295,7 +392,7 @@ export const serverActionUpdateComment = async (prevState, formData) => {
       "Validation Error: @serverActionUpdateComment - ",
       validatedID.error
     );
-    return null;
+    return { success: false, error: "Invalid comment id." };
   }
 
   // 3rd check: check for user ownership of the comment
@@ -307,7 +404,10 @@ export const serverActionUpdateComment = async (prevState, formData) => {
     console.log(
       `Security Error: @serverActionUpdateComment - user with user_id (${session.id}) does not own comment with comment_id (${comment_id}) to update comment.`
     );
-    return null;
+    return {
+      success: false,
+      error: "Invalid authorization. You are not the owner of this comment.",
+    };
   }
 
   // 4th check: check for valid form data
@@ -320,7 +420,7 @@ export const serverActionUpdateComment = async (prevState, formData) => {
       "Validation Error: @serverActionUpdateComment - ",
       validatedForm.error
     );
-    return null;
+    return { success: false, error: "Invalid comment." };
   }
 
   const { comment } = validatedForm.data;
@@ -330,14 +430,24 @@ export const serverActionUpdateComment = async (prevState, formData) => {
     const [updatedComment] = await sql`UPDATE Comments
                                        SET comment=${comment}
                                        WHERE comment_id=${comment_id}
-                                       RETURNING comment_id`;
-    return updatedComment;
+                                       RETURNING location_id, comment_id`;
+    if (!updatedComment) {
+      throw new Error("No comment exists with the provided comment_id.");
+    }
+    return {
+      success: true,
+      location_id: updatedComment.location_id,
+      comment_id: updatedComment.comment_id,
+    };
   } catch (error) {
     console.log(
       `DB Error: @serverActionUpdateComment - Failed to update comment with comment_id (${comment_id}).`
     );
     console.log(error);
-    return null;
+    return {
+      success: false,
+      error: "An issue occured updating the comment, try again.",
+    };
   }
 };
 
@@ -354,7 +464,7 @@ export const serverActionUpdateLocation = async (prevState, formData) => {
       "Validation Error: @serverActionUpdateLocation - ",
       validatedID.error
     );
-    return null;
+    return { success: false, error: "Invalid location id." };
   }
 
   const { id: location_id } = validatedID.data;
@@ -366,7 +476,10 @@ export const serverActionUpdateLocation = async (prevState, formData) => {
     console.log(
       `Security Error: @serverActionUpdateLocation - user with user_id (${session.id}) does not own location with location_id (${location_id}) to update location.`
     );
-    return null;
+    return {
+      success: false,
+      error: "Invalid authorization. You are not the onwer of this location.",
+    };
   }
 
   // 4th check: check for valid form data
@@ -385,7 +498,11 @@ export const serverActionUpdateLocation = async (prevState, formData) => {
       "Validation Error: @serverActionUpdateLocation - ",
       validatedFormLocationData.error
     );
-    return null;
+
+    const errorMessage = createErrorMessage(
+      validatedFormLocationData.error.issues
+    );
+    return { success: false, error: errorMessage };
   }
 
   const { name, city, category, address, url, description } =
@@ -430,7 +547,8 @@ export const serverActionUpdateLocation = async (prevState, formData) => {
         "Validation Error: @serverActionUpdateLocation - ",
         validatedData.error
       );
-      return null;
+      const errorMessage = createErrorMessage(validatedData.error.issues);
+      return { success: false, error: errorMessage };
     }
 
     validatedFormHoursCreateDays.push(validatedData.data);
@@ -443,7 +561,8 @@ export const serverActionUpdateLocation = async (prevState, formData) => {
         "Validation Error: @serverActionUpdateLocation -",
         validatedData.error
       );
-      return null;
+      const errorMessage = createErrorMessage(validatedData.error.issues);
+      return { success: false, error: errorMessage };
     }
 
     validatedFormHoursUpdateDays.push(validatedData.data);
@@ -479,13 +598,20 @@ export const serverActionUpdateLocation = async (prevState, formData) => {
       return queries;
     });
 
-    return updatedLocation;
+    if (!updatedLocation[0]) {
+      throw new Error("No location exists with the provided location_id.");
+    }
+
+    return { success: true, location_id: updatedLocation[0].location_id };
   } catch (error) {
     console.log(
       `DB Error: @serverActionUpdateLocation - Failed to update location with location_id (${location_id}).`
     );
     console.log(error);
-    return null;
+    return {
+      success: false,
+      error: "An issue occured updating location, try again.",
+    };
   }
 };
 
@@ -501,7 +627,7 @@ export const serverActionUpdateVote = async (commnetId, updateVote) => {
       "Validation Error: @serverActionUpdateVote - ",
       validatedID.error
     );
-    return null;
+    return { success: false, error: "Invalid comment id." };
   }
 
   const { id: comment_id } = validatedID.data;
@@ -516,7 +642,7 @@ export const serverActionUpdateVote = async (commnetId, updateVote) => {
       "Validation Error: @serverActionUpdateVote - ",
       validatedForm.error
     );
-    return null;
+    return { success: false, error: "Invalid vote type." };
   }
 
   const { vote } = validatedForm.data;
@@ -527,13 +653,26 @@ export const serverActionUpdateVote = async (commnetId, updateVote) => {
                                     SET vote=${vote}
                                     WHERE user_id=${session.id} AND comment_id=${comment_id}
                                     RETURNING comment_id, vote`;
-    return updatedVote;
+
+    if (!updatedVote) {
+      throw new Error(
+        "No vote exists with the provided user_id and comment_id"
+      );
+    }
+    return {
+      success: true,
+      comment_id: updatedVote.comment_id,
+      vote: updatedVote.vote,
+    };
   } catch (error) {
     console.log(
       `DB Error: @serverActionUpdateVote - Failed to update vote with comment_id (${comment_id}).`
     );
     console.log(error);
-    return null;
+    return {
+      success: false,
+      error: "An issue occured updating vote, try again.",
+    };
   }
 };
 
@@ -546,14 +685,17 @@ export const serverActionDeleteUser = async () => {
   try {
     const [user] =
       await sql`DELETE FROM Users WHERE user_id=${session.id} RETURNING user_id`;
-    return user;
+    return { success: true, user_id: user.user_id };
     // signout to destroy the session
   } catch (error) {
     console.log(
       `DB Error: @serverActionDeleteUser - Failed to delete the signined in user with user_id (${session.id}).`
     );
     console.log(error);
-    return null;
+    return {
+      success: false,
+      error: "An issue occured deleting the user, try again.",
+    };
   }
 };
 
@@ -570,7 +712,7 @@ export const serverActionDeleteComment = async (commentId) => {
       "Validation Error: @serverActionDeleteComment - ",
       validatedID.error
     );
-    return null;
+    return { success: false, error: "Invalid comment id." };
   }
 
   const { id: comment_id } = validatedID.data;
@@ -582,20 +724,29 @@ export const serverActionDeleteComment = async (commentId) => {
     console.log(
       `Security Error: @serverActionDeleteComment - user with user_id (${session.id}) does not own comment with comment_id (${comment_id}) to delete.`
     );
-    return null;
+    return {
+      success: false,
+      error: "Invalid authorization. You do not own this comment.",
+    };
   }
 
   // db operation
   try {
     const [comment] =
-      await sql`DELETE FROM Comments WHERE coment_id=${comment_id} returning comment_id`;
-    return comment;
+      await sql`DELETE FROM Comments WHERE comment_id=${comment_id} returning comment_id`;
+    if (!comment) {
+      throw new Error("No comment exists with the provided comment_id");
+    }
+    return { success: true, commnet_id: comment.comment_id };
   } catch (error) {
     console.log(
       `DB Error: @serverActionDeleteComment - Failed to delete the comment with comment_id (${comment_id}).`
     );
     console.log(error);
-    return null;
+    return {
+      success: false,
+      error: "An issue occured deleting the comment, try again.",
+    };
   }
 };
 
@@ -611,21 +762,29 @@ export const serverActionDeleteVote = async (commentId) => {
       "Validation Error: @serverActionDeleteVote - ",
       validatedID.error
     );
-    return null;
+    return { success: false, error: "Invalid comment id." };
   }
 
   const { id: comment_id } = validatedID.data;
 
   // db operation
   try {
-    const [vote] =
+    const [deletedVote] =
       await sql`DELETE FROM Votes WHERE user_id=${session.id} AND comment_id=${comment_id} RETURNING comment_id`;
-    return vote;
+    if (!deletedVote) {
+      throw new Error(
+        "No vote exists with the provided user_id and comment_id"
+      );
+    }
+    return { success: true, comment_id: deletedVote.comment_id };
   } catch (error) {
     console.log(
       `DB Error: @serverActionDeleteVote - Failed to delete the vote with comment_id (${comment_id}).`
     );
     console.log(error);
-    return null;
+    return {
+      success: false,
+      error: "An issue occured deleting the vote, try again.",
+    };
   }
 };
