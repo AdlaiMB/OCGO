@@ -164,11 +164,11 @@ export const getCommentVote = async (userId, commentId) => {
   }
 };
 
-export const getUserByUsernameAndPassword = async (username, password) => {
+export const getUserForAuth = async (username) => {
   try {
-    const [user] = await sql`SELECT user_id, name
+    const [user] = await sql`SELECT user_id, name, password
                              FROM Users
-                             WHERE name=${username} AND password=${password}`;
+                             WHERE name=${username}`;
     return user ? user : null;
   } catch (error) {
     console.log("Failed to fetch user by username and password.");

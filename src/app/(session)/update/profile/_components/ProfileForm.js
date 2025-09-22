@@ -1,10 +1,10 @@
 "use client";
 
-import { useActionState, useEffect } from "react";
-import { useRouter } from "next/navigation";
-import { useSession } from "next-auth/react";
-
 import { serverActionUpdateUser } from "@/lib/actions";
+
+import { useRouter } from "next/navigation";
+import { useActionState, useEffect } from "react";
+import { useSession } from "next-auth/react";
 
 export default function ProfileForm({ name, bio }) {
   const [state, action, isPending] = useActionState(

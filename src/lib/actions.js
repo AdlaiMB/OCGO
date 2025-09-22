@@ -1,5 +1,8 @@
 "use server";
 
+import argon2 from "argon2";
+import { AuthError } from "next-auth";
+
 import { signIn } from "@/auth";
 import sql from "@/db";
 import { verifySession, getCommentOwnerId, getLocationOwnerId } from "./dal";
@@ -13,8 +16,6 @@ import {
   voteSchema,
   createErrorMessage,
 } from "./definitions";
-
-import { AuthError } from "next-auth";
 
 export const serverActionSignIn = async (prevState, formData) => {
   try {
@@ -83,10 +84,25 @@ export const serverActionSignUp = async (prevState, formData) => {
   }
 
   // hash password
+  let hash;
+
+  try {
+    hash = await argon2.hash(password);
+  } catch (error) {
+    console.log(error);
+    console.log(
+      "Hash Error: @serverActionSignUp - Failed to hash the password."
+    );
+    return {
+      success: false,
+      error: "An issue occured during sign up, try again.",
+    };
+  }
+
   // db operation
   try {
     const [newUser] =
-      await sql`INSERT INTO Users (name, password, bio) VALUES (${username}, ${password}, ${bio}) RETURNING name`;
+      await sql`INSERT INTO Users (name, password, bio) VALUES (${username}, ${hash}, ${bio}) RETURNING name`;
     // create session
     await signIn("credentials", {
       username,
@@ -353,10 +369,25 @@ export const serverActionUpdateUser = async (prevState, formData) => {
   const { username, password, bio } = validatedForm.data;
 
   // hash password if exists
+  let hash;
+  if (password) {
+    try {
+      hash = await argon2.hash(password);
+    } catch (error) {
+      console.log(error);
+      console.log(
+        `Hash Error: @serverActionUpdateUser - Failed to update user with user_id (${session.id}).`
+      );
+      return {
+        success: false,
+        error: "An issue occured updating user, try agin.",
+      };
+    }
+  }
 
   // db operation
   // create set clause dynamically based on the presence of password
-  const passwordClause = password ? sql`, password=${password}` : sql``;
+  const passwordClause = password ? sql`, password=${hash}` : sql``;
   const setClause = sql`SET name=${username}, bio=${bio} ${passwordClause}`;
   try {
     const [user] = await sql`UPDATE Users
