@@ -4,6 +4,7 @@ import CommentCard from "./CommentCard";
 import { useState } from "react";
 
 export default function CommentPosts({
+  view,
   comments: DBcomments,
   isSessionUsersProfile,
 }) {
@@ -24,9 +25,12 @@ export default function CommentPosts({
   };
 
   return (
-    <div id="CommentPosts" className="basis-full">
-      <h2 className="text-xl">comments</h2>
-      <div id="Comments" className="posts-container gap-2 mt-4">
+    <div id="CommentPosts" className={`basis-full ${view} lg:block`}>
+      <h2 className="text-lg md:text-xl font-medium">comments</h2>
+      <div
+        id="Comments"
+        className="posts-container p-3 md:p-4 lg:p-6 gap-2 mt-4"
+      >
         {comments.map((comment) => (
           <CommentCard
             onDeleteClick={handleDeleteComment}
