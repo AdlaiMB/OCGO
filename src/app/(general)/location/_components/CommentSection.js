@@ -25,15 +25,18 @@ export default function CommentSection({ locationId, comments: DBcomments }) {
   return (
     <div id="CommentSection">
       <div className="flex items-center justify-between">
-        <h2 className="text-xl font-medium">comments</h2>
+        <h2 className="text-lg md:text-xl font-medium">comments</h2>
         <Link
           href={`/create/comment?location_id=${locationId}`}
-          className="btn text-sm rounded-sm px-4 py-3 transition-colors"
+          className="btn text-xs md:text-sm rounded-sm px-4 py-3 transition-colors"
         >
           leave a comment
         </Link>
       </div>
-      <div id="Comments" className="posts-container gap-2 mt-4">
+      <div
+        id="Comments"
+        className="posts-container p-3 md:p-4 lg:p-6 gap-2 mt-4"
+      >
         {comments.map((comment) => (
           <CommentCard
             onDeleteClick={handleDeleteComment}

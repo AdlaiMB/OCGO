@@ -24,37 +24,50 @@ export default function LocationContent({
   const currentDay = days[new Date().getDay()];
 
   return (
-    <div id="LocationContent" className="posts-container gap-2">
+    <div
+      id="LocationContent"
+      className="posts-container p-3 md:p-4 lg:p-6 gap-2"
+    >
       <div id="LocationHeader" className="flex flex-col gap-2">
         <div
           id="LocationName&Actions"
-          className="flex items-center justify-between"
+          className="flex items-start md:items-center justify-between"
         >
-          <h1 className="text-3xl">{locationName}</h1>
+          <h1 className="text-2xl md:text-3xl">{locationName}</h1>
           <Link
             href={`/update/location/${locationId}`}
-            className="btn text-sm rounded-sm px-4 py-2 transition-colors"
+            className="btn text-xs md:text-sm rounded-sm px-4 py-2 transition-colors"
           >
             edit
           </Link>
         </div>
-        <div id="LocationFilters" className="flex gap-1 items-center text-sm">
+        <div
+          id="LocationFilters"
+          className="flex gap-1 items-center text-xs md:text-sm"
+        >
           <span className="tag py-0.5 px-1 rounded-sm">{city}</span>
           <span className="tag py-0.5 px-1 rounded-sm">{category}</span>
         </div>
-        <Link id="LocationOwner" href={`/profile/${owner}`} className="text-sm">
+        <Link
+          id="LocationOwner"
+          href={`/profile/${owner}`}
+          className="text-xs md:text-sm"
+        >
           @{owner}
         </Link>
       </div>
       <div id="LocationImg"></div>
-      <div id="LocationInfo" className="flex flex-col gap-2">
-        <div className="flex justify-between">
+      <div
+        id="LocationInfo"
+        className="flex flex-col gap-2 text-sm md:text-base"
+      >
+        <div className="flex flex-col gap-2 lg:flex-row lg:gap-0 md:justify-between">
           <p id="LocationAddress">
             <span className="capitalize font-semibold">address: </span>
             {address}
           </p>
           <p>
-            <span className="capitalie font-semibold">link: </span>
+            <span className="capitalize font-semibold">link: </span>
             <Link id="LocationLink" href={url}>
               {url}
             </Link>

@@ -46,7 +46,7 @@ export default async function Page({ params }) {
   return (
     <div
       id="Location"
-      className="flex flex-col gap-10 max-w-[1700px] px-10 mt-14 mx-auto"
+      className="flex flex-col gap-10 max-w-[1700px] px-2 md:px-10 mt-14 mx-auto"
     >
       <LocationContent
         owner={user_name}

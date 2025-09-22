@@ -169,7 +169,11 @@ export default function CommentCard({
             <div className="flex items-center justify-center rounded-full w-[35px] h-[35px] border text-black bg-white">
               {owner[0]}
             </div>
-            <Link id="LocationOwner" href={`/profile/${owner}`}>
+            <Link
+              id="LocationOwner"
+              href={`/profile/${owner}`}
+              className="text-sm md:text-base"
+            >
               @{owner}
             </Link>
           </div>
@@ -177,13 +181,13 @@ export default function CommentCard({
             <div className="flex gap-2 relative">
               <Link
                 href={`/update/comment/${commentId}`}
-                className="btn text-sm rounded-sm px-2 py-1 transition-colors hover:bg-[#111111]"
+                className="btn text-xs md:text-sm rounded-sm px-2 py-1 transition-colors hover:bg-[#111111]"
               >
                 edit
               </Link>
               <button
                 onClick={() => setModalDisplay(!modalDisplay)}
-                className="btn text-sm rounded-sm px-2 py-1 transition-colors hover:bg-[#111111]"
+                className="btn text-xs md:text-sm rounded-sm px-2 py-1 transition-colors hover:bg-[#111111]"
               >
                 delete
               </button>
@@ -209,29 +213,29 @@ export default function CommentCard({
             </div>
           )}
         </div>
-        <div>{comment}</div>
+        <p className="text-sm md:text-base">{comment}</p>
         <div className="flex gap-4">
           <div className="flex gap-1 items-center">
             <button
               onClick={() => handleVoteClick(commentId, "upvote")}
               className={`${
                 optimisticVote === "upvote" ? "border-green-700" : ""
-              } btn text-sm rounded-sm p-2 transition-colors hover:bg-[#111111]`}
+              } btn text-xs md:text-sm rounded-sm p-2 transition-colors hover:bg-[#111111]`}
             >
               upvote
             </button>
-            <span>{optimisticUpvotes}</span>
+            <span className="text-base md:text-lg">{optimisticUpvotes}</span>
           </div>
           <div className="flex gap-1 items-center">
             <button
               onClick={() => handleVoteClick(commentId, "downvote")}
               className={`${
                 optimisticVote === "downvote" ? "border-red-700" : ""
-              } btn text-sm rounded-sm p-2 transition-colors hover:bg-[#111111]`}
+              } btn text-xs md:text-sm rounded-sm p-2 transition-colors hover:bg-[#111111]`}
             >
               downvote
             </button>
-            <span>{optimisticDownvotes}</span>
+            <span className="text-base md:text-lg">{optimisticDownvotes}</span>
           </div>
         </div>
       </div>
