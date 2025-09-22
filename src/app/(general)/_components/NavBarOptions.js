@@ -15,13 +15,15 @@ function UserOptions({ username }) {
 
   return (
     <>
-      <Link href={`/profile/${username}`} className="font-normal">
-        {" "}
-        {username}{" "}
+      <Link
+        href={`/profile/${username}`}
+        className="text-sm md:text-base font-normal transition-colors text-[#c4c3c3] hover:text-white"
+      >
+        {username}
       </Link>
       <button
         onClick={handleSignOutClick}
-        className="btn text-sm rounded-sm px-4 py-2 transition-colors"
+        className="btn text-xs md:text-sm rounded-sm px-4 py-2 transition-colors"
       >
         sign out
       </button>
@@ -34,13 +36,13 @@ function DefaultOptions() {
     <>
       <Link
         href="/signin"
-        className="btn text-sm rounded-sm px-4 py-2 transition-colors"
+        className="btn text-xs md:text-sm rounded-sm px-4 py-2 transition-colors"
       >
         sign in
       </Link>
       <Link
         href="/signup"
-        className="btn text-sm rounded-sm px-4 py-2 transition-colors"
+        className="btn text-xs md:text-sm rounded-sm px-4 py-2 transition-colors"
       >
         sign up
       </Link>

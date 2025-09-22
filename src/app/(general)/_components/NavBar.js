@@ -8,14 +8,14 @@ export default async function NavBar() {
   const session = await auth();
 
   return (
-    <div id="NavBar" className="navbar px-10 py-4">
-      <div className="text-4xl font-bold">
+    <div id="NavBar" className="navbar px-6 md:px-10 py-4">
+      <div className="text-3xl md:text-4xl font-bold">
         <span className="text-[#E8963A]">OC</span>
         <span className="text-[#4B8E5A]">GO</span>
       </div>
       <Link
         href="/search"
-        className="ml-10 font-normal transition-colors text-[#c4c3c3] hover:text-white"
+        className="text-sm md:text-base ml-4 md:ml-10 font-normal transition-colors text-[#c4c3c3] hover:text-white"
       >
         search
       </Link>
