@@ -44,7 +44,7 @@ export default function LocationPosts({
 
   return (
     <div id="LocationPosts" className="basis-full">
-      <div id="Comments" className="posts-container">
+      <div id="Comments" className="posts-container p-3 md:p-4 lg:p-6">
         {locations}
       </div>
     </div>

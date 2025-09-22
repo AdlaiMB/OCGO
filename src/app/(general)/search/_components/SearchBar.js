@@ -15,7 +15,7 @@ export default function SearchBar({
         value={filterSearch}
         onChange={(e) => onFilterSearchChange(e.target.value)}
         placeholder="search ..."
-        className="searchbar p-3 text-lg"
+        className="searchbar p-2.5 text-base md:p-3 md:text-lg focus:border-blue-500 focus:outline-none focus:ring-0"
       />
       <DropDownMenu
         filterCitys={filterCitys}

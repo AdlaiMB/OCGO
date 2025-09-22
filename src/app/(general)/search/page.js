@@ -22,7 +22,7 @@ export default async function Page() {
   return (
     <div
       id="search-page"
-      className="flex flex-col gap-4 max-w-[1700px] px-10 mt-14 mx-auto"
+      className="flex flex-col gap-6 md:gap-10 max-w-[1700px] px-2 md:px-10 mt-14 mx-auto"
     >
       <FilterableLocationPosts locations={locations} />
     </div>

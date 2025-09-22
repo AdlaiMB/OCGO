@@ -175,7 +175,7 @@ export default function DropDownMenu({
     <div className="ml-2 relative">
       <button
         onClick={handleButtonClick}
-        className="btn text-sm rounded-sm h-full px-6"
+        className="btn text-xs md:text-sm rounded-sm h-full px-6"
       >
         filters
       </button>
