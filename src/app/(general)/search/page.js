@@ -17,6 +17,8 @@ export default async function Page() {
     if (sessionUserID && sessionUserID === location.user_id) {
       location["isSessionUsersLocation"] = true;
     }
+
+    delete location.user_id;
   }
 
   return (

@@ -48,6 +48,11 @@ export default async function Page({ params }) {
     comment["sessionUsersVote"] = vote ? vote : null;
   }
 
+  // remove user_id from comments
+  for (const comment of comments) {
+    delete comment.user_id;
+  }
+
   return (
     <div
       id="Location"
