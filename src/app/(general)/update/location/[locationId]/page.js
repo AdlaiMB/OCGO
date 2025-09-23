@@ -14,7 +14,7 @@ export default async function Page({ params }) {
   const { user_id } = await getLocationOwnerId(locationId);
 
   if (session.user.id !== user_id) {
-    redirect(`/profile/${session.user.name}`); // TODO : Fix the redirect link for all redirects
+    redirect(`/profile/${session.user.name}`);
   }
 
   // fetch the location data
