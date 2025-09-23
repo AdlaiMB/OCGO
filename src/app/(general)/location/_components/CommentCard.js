@@ -167,15 +167,19 @@ export default function CommentCard({
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2">
             <div className="flex items-center justify-center rounded-full w-[35px] h-[35px] border text-black bg-white">
-              {owner[0]}
+              {owner ? owner[0] : "d"}
             </div>
-            <Link
-              id="LocationOwner"
-              href={`/profile/${owner}`}
-              className="text-sm md:text-base"
-            >
-              @{owner}
-            </Link>
+            {owner ? (
+              <Link
+                id="LocationOwner"
+                href={`/profile/${owner}`}
+                className="text-sm md:text-base"
+              >
+                @{owner}
+              </Link>
+            ) : (
+              <span className="text-sm md:text-base">deleted</span>
+            )}
           </div>
           {isSessionUsersComment && (
             <div className="flex gap-2 relative">

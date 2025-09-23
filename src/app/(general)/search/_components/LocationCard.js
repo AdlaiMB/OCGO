@@ -31,7 +31,11 @@ export default function LocationCard({
         <div className="flex gap-2 items-center text-xs md:text-sm">
           <span className="tag p-1 rounded-sm">{city}</span>
           <span className="tag p-1 rounded-sm">{category}</span>
-          <Link href={`/profile/${owner}`}>@{owner}</Link>
+          {owner ? (
+            <Link href={`/profile/${owner}`}>@{owner}</Link>
+          ) : (
+            <span>deleted</span>
+          )}
         </div>
         <p className="text-sm md:text-base">
           <span className="capitalize font-semibold">address: </span>

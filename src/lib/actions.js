@@ -3,7 +3,7 @@
 import argon2 from "argon2";
 import { AuthError } from "next-auth";
 
-import { signIn } from "@/auth";
+import { signIn, signOut } from "@/auth";
 import sql from "@/db";
 import { verifySession, getCommentOwnerId, getLocationOwnerId } from "./dal";
 import {
@@ -714,10 +714,9 @@ export const serverActionDeleteUser = async () => {
 
   // db operation
   try {
-    const [user] =
-      await sql`DELETE FROM Users WHERE user_id=${session.id} RETURNING user_id`;
-    return { success: true, user_id: user.user_id };
-    // signout to destroy the session
+    await sql`DELETE FROM Users WHERE user_id=${session.id}`;
+    await signOut({ redirect: false });
+    return { success: true };
   } catch (error) {
     console.log(
       `DB Error: @serverActionDeleteUser - Failed to delete the signined in user with user_id (${session.id}).`

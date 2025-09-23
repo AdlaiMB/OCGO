@@ -2,15 +2,24 @@
 
 import Link from "next/link";
 import { useState } from "react";
+import { useRouter } from "next/navigation";
+
+import { serverActionDeleteUser } from "@/lib/actions";
 
 export default function ProfileHeader({ name, bio, isSessionUsersProfile }) {
   const [modalDisplay, setModalDisplay] = useState(false);
+  const router = useRouter();
 
-  const handleDeleteClick = () => {
-    alert(
-      "this button will delete the account. feature needs to be implemented"
-    );
-    setModalDisplay(false);
+  const handleDeleteClick = async () => {
+    const response = await serverActionDeleteUser();
+
+    if (!response.success) {
+      console.log(response.error);
+      return;
+    }
+
+    router.refresh();
+    router.push("/search");
   };
 
   return (
@@ -46,8 +55,8 @@ export default function ProfileHeader({ name, bio, isSessionUsersProfile }) {
               delete
             </button>
             {modalDisplay && (
-              <div className="w-[300px] p-0.5 z-10 absolute right-0 sm:left-0 top-11 rounded-sm text-black bg-white">
-                <p>are you sure you want to delete the account.</p>
+              <div className="w-[300px] dropdown-menu flex-col gap-2 absolute left-0 top-11 rounded-sm text-sm">
+                <p>are you sure you want to delete the account?</p>
                 <div className="flex gap-1">
                   <button
                     onClick={() => handleDeleteClick()}

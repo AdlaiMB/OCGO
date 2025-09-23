@@ -74,13 +74,17 @@ export default function LocationContent({
           <span className="tag py-0.5 px-1 rounded-sm">{city}</span>
           <span className="tag py-0.5 px-1 rounded-sm">{category}</span>
         </div>
-        <Link
-          id="LocationOwner"
-          href={`/profile/${owner}`}
-          className="text-xs md:text-sm"
-        >
-          @{owner}
-        </Link>
+        {owner ? (
+          <Link
+            id="LocationOwner"
+            href={`/profile/${owner}`}
+            className="text-xs md:text-sm"
+          >
+            @{owner}
+          </Link>
+        ) : (
+          <span className="text-xs md:text-sm">deleted</span>
+        )}
       </div>
       <div id="LocationImg"></div>
       <div
