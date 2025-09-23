@@ -1,4 +1,5 @@
 import Link from "next/link";
+import DropDownHours from "./DropDownHours";
 
 export default function LocationContent({
   isSessionUsersLocation,
@@ -10,19 +11,41 @@ export default function LocationContent({
   address,
   url,
   description,
-  hours,
+  hours: DBhours,
 }) {
   const days = [
-    "sunday",
     "monday",
     "tuesday",
     "wednesday",
     "thursday",
     "friday",
     "saturday",
+    "sunday",
   ];
 
   const currentDay = days[new Date().getDay()];
+  const hours = {};
+
+  const convertToSTDTime = (time) => {
+    const [h, minutes] = time.split(":");
+    const hours = Number(h);
+
+    if (hours <= 11) {
+      return `${hours === 0 ? 12 : hours}:${minutes} AM`;
+    } else {
+      return `${hours === 12 ? hours : hours - 12}:${minutes} PM`;
+    }
+  };
+
+  for (const hour of days) {
+    if (!DBhours[hour]) {
+      hours[hour] = ["closed", null];
+      continue;
+    }
+
+    const [open, close] = DBhours[hour];
+    hours[hour] = [convertToSTDTime(open), convertToSTDTime(close)];
+  }
 
   return (
     <div
@@ -76,10 +99,7 @@ export default function LocationContent({
             </Link>
           </p>
         </div>
-        <p id="LocationHours">
-          <span className="capitalize font-semibold">hours: </span>
-          {`${currentDay} ${hours[currentDay][0]} - ${hours[currentDay][1]} `}
-        </p>
+        <DropDownHours hours={hours} currentDay={currentDay} />
         <p id="LocationDescription">
           <span className="capitalize font-semibold">description:</span>
           <br></br>
