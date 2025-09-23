@@ -49,18 +49,18 @@ export default function CommentCard({
                 delete
               </button>
               {modalDisplay && (
-                <div className="w-[300px] p-0.5 z-10 absolute right-0 top-10 rounded-sm text-sm text-black bg-white">
+                <div className="w-[300px] dropdown-menu flex-col gap-2 absolute right-0 top-8 rounded-sm text-sm">
                   <p>are you sure you want to delete?</p>
-                  <div className="flex gap-1">
+                  <div className="flex gap-2">
                     <button
                       onClick={() => onDeleteClick(commentId)}
-                      className="text-sm rounded-sm px-2 py-1 transition-colors bg-green-800 hover:bg-green-500 cursor-pointer"
+                      className="text-sm rounded-sm px-3 py-1 transition-colors border bg-green-800 border-green-600 hover:bg-green-700 cursor-pointer"
                     >
                       yes
                     </button>
                     <button
                       onClick={() => setModalDisplay(false)}
-                      className="text-sm rounded-sm px-2 py-1 transition-colors bg-red-800 hover:bg-red-500 cursor-pointer"
+                      className="text-sm rounded-sm px-3 py-1 transition-colors border bg-red-800 border-red-600 hover:bg-red-700 cursor-pointer"
                     >
                       no
                     </button>

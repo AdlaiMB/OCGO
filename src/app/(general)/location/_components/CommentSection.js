@@ -1,25 +1,44 @@
 "use client";
 
 import Link from "next/link";
-import { useState } from "react";
+import { serverActionDeleteComment } from "@/lib/actions";
+import { startTransition, useOptimistic, useState } from "react";
 
 import CommentCard from "./CommentCard";
 
 export default function CommentSection({ locationId, comments: DBcomments }) {
   const [comments, setComments] = useState(DBcomments);
+  const [optimisticComments, removeOptimisticComment] = useOptimistic(
+    comments,
+    (comments, deletedCommentId) =>
+      [...comments].filter((comment) => comment.comment_id !== deletedCommentId)
+  );
 
   const handleDeleteComment = (commentId) => {
-    const newComments = [];
+    startTransition(() => {
+      removeOptimisticComment(commentId);
 
-    for (const comment of comments) {
-      if (comment.comment_id === commentId) {
-        continue;
-      }
+      startTransition(async () => {
+        const response = await serverActionDeleteComment(commentId);
 
-      newComments.push(comment);
-    }
+        if (!response.success) {
+          console.log(response.error);
+          return;
+        }
 
-    setComments(newComments);
+        const { comment_id } = response;
+
+        startTransition(() => {
+          if (commentId === comment_id) {
+            setComments((comments) =>
+              [...comments].filter(
+                (comment) => comment.comment_id !== commentId
+              )
+            );
+          }
+        });
+      });
+    });
   };
 
   return (
@@ -37,7 +56,7 @@ export default function CommentSection({ locationId, comments: DBcomments }) {
         id="Comments"
         className="posts-container p-3 md:p-4 lg:p-6 gap-2 mt-4"
       >
-        {comments.map((comment) => (
+        {optimisticComments.map((comment) => (
           <CommentCard
             onDeleteClick={handleDeleteComment}
             key={comment.comment_id}

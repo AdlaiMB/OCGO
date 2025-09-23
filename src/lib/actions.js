@@ -768,7 +768,7 @@ export const serverActionDeleteComment = async (commentId) => {
     if (!comment) {
       throw new Error("No comment exists with the provided comment_id");
     }
-    return { success: true, commnet_id: comment.comment_id };
+    return { success: true, comment_id: comment.comment_id };
   } catch (error) {
     console.log(
       `DB Error: @serverActionDeleteComment - Failed to delete the comment with comment_id (${comment_id}).`
