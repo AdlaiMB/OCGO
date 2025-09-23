@@ -25,10 +25,13 @@ export default function Page() {
   }, [state]);
 
   return (
-    <div id="CommentFormPage" className="max-w-[1700px] px-10 mt-14 mx-auto">
+    <div
+      id="CommentFormPage"
+      className="max-w-[1700px] px-2 md:px-10 mt-14 mx-auto"
+    >
       {state && (
         <div
-          className={`p-2 mb-4 rounded-md border ${
+          className={`p-2 mb-4 rounded-md border text-sm md:text-base ${
             state.success
               ? "bg-green-800 border-green-600"
               : "bg-red-800 border-red-600"
@@ -41,11 +44,14 @@ export default function Page() {
           </p>
         </div>
       )}
-      <div id="CommentForm" className="posts-container">
-        <h1 className="text-3xl font-semibold">post comment</h1>
+      <div id="CommentForm" className="posts-container p-3 md:p-4 lg:p-6">
+        <h1 className="text-2xl md:text-3xl font-semibold">post comment</h1>
         <form action={action} className="flex flex-col gap-4">
           <input type="hidden" name="location_id" defaultValue={locationId} />
-          <label htmlFor="comment" className="font-normal capitalize">
+          <label
+            htmlFor="comment"
+            className="text-sm md:text-base font-normal capitalize"
+          >
             comment
           </label>
           <textarea
@@ -54,12 +60,12 @@ export default function Page() {
             placeholder="enter comment ..."
             rows="7"
             required
-            className="border border-[#333333] p-2 rounded-md focus:border-blue-500 focus:outline-none focus:ring-0"
+            className="text-sm md:text-base border border-[#333333] p-2 rounded-md focus:border-blue-500 focus:outline-none focus:ring-0"
           />
 
           <button
             disabled={isPending}
-            className="btn py-4 px-7 rounded-md self-baseline transition-colors"
+            className="btn text-sm md:text-base py-4 px-7 rounded-md self-baseline transition-colors"
           >
             {isPending ? "posting ..." : "post"}
           </button>
