@@ -11,6 +11,7 @@ import CommentSection from "../_components/CommentSection";
 export default async function Page({ params }) {
   const { locationId } = await params;
   const {
+    user_id,
     user_name,
     location_name,
     city,
@@ -26,6 +27,10 @@ export default async function Page({ params }) {
   const sessionUserID = session ? session.user.id : null;
 
   // security
+  // check session user ownership of profile page
+  const isLocationOwner =
+    sessionUserID && sessionUserID === user_id ? true : false;
+
   // check session user ownership of comments (add two new fields isSessionUsersComment, sessionUserVote)
   for (const comment of comments) {
     comment["isSessionUsersComment"] = false;
@@ -49,6 +54,7 @@ export default async function Page({ params }) {
       className="flex flex-col gap-10 max-w-[1700px] px-2 md:px-10 mt-14 mx-auto"
     >
       <LocationContent
+        isSessionUsersLocation={isLocationOwner}
         owner={user_name}
         locationId={locationId}
         locationName={location_name}

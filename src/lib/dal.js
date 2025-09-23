@@ -58,7 +58,7 @@ export const getCommentByCommentId = async (commentId) => {
 export const getLocationByLocationId = async (locationId) => {
   try {
     const [location] =
-      await sql`SELECT user_name, location_name, city, category, address, url, description, hours
+      await sql`SELECT user_id, user_name, location_name, city, category, address, url, description, hours
                 FROM location_info
                 WHERE location_id=${locationId}`;
 

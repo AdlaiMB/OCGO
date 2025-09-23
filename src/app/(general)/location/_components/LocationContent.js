@@ -1,6 +1,7 @@
 import Link from "next/link";
 
 export default function LocationContent({
+  isSessionUsersLocation,
   owner,
   locationId,
   locationName,
@@ -34,12 +35,14 @@ export default function LocationContent({
           className="flex items-start md:items-center justify-between"
         >
           <h1 className="text-2xl md:text-3xl">{locationName}</h1>
-          <Link
-            href={`/update/location/${locationId}`}
-            className="btn text-xs md:text-sm rounded-sm px-4 py-2 transition-colors"
-          >
-            edit
-          </Link>
+          {isSessionUsersLocation && (
+            <Link
+              href={`/update/location/${locationId}`}
+              className="btn text-xs md:text-sm rounded-sm px-4 py-2 transition-colors"
+            >
+              edit
+            </Link>
+          )}
         </div>
         <div
           id="LocationFilters"
