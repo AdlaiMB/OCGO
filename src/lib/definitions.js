@@ -2,7 +2,12 @@ import { z } from "zod";
 
 // create a seperate schema for ids to validate they are numeric strings
 const userSchema = z.strictObject({
-  username: z.string().min(1).max(15).trim(),
+  username: z
+    .string()
+    .min(1)
+    .max(15)
+    .regex(/^[a-zA-Z0-9!@#$%^&*()_+]*$/, { error: "Can not contain spaces" })
+    .trim(),
   password: z
     .string()
     .min(10, { error: "Must be of a minimum 10 charcters long." })
@@ -13,6 +18,7 @@ const userSchema = z.strictObject({
     .regex(/[^a-zA-Z0-9]/, {
       error: "Contain at least one special character.",
     })
+    .regex(/^[a-zA-Z0-9!@#$%^&*()_+]*$/, { error: "Can not contain spaces" })
     .trim(),
   bio: z.string().trim(),
 });

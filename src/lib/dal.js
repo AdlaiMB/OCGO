@@ -74,7 +74,8 @@ export const getAbstractLocationsByUserId = async (userId) => {
   try {
     const locations = sql`SELECT location_id, name, city, category, description
                           FROM Locations
-                          WHERE user_id=${userId}`;
+                          WHERE user_id=${userId}
+                          ORDER BY location_id ASC`;
 
     return locations;
   } catch (error) {
@@ -88,7 +89,8 @@ export const getAbstractCommentsByUserId = async (userId) => {
   try {
     const comments = sql`SELECT comment_id, location_id, location_name, comment, upvotes, downvotes
                          FROM comment_info
-                         WHERE user_id=${userId}`;
+                         WHERE user_id=${userId}
+                         ORDER BY comment_id ASC`;
 
     return comments;
   } catch (error) {
@@ -103,7 +105,8 @@ export const getCommentsByLocationId = async (locationId) => {
     const comments =
       await sql`SELECT user_id, comment_id, user_name, comment, upvotes, downvotes
                 FROM comment_info
-                WHERE location_id=${locationId}`;
+                WHERE location_id=${locationId}
+                ORDER BY comment_id ASC`;
     return comments;
   } catch (error) {
     console.log("Error: Failed to fetch comments by location id.");

@@ -36,6 +36,7 @@
 
   .searchbar {
     background-color: #1a1a1a;
+    border: 1px solid #1a1a1a;
     border-radius: 4px;
     width: 100%;
     color: var(--color-foreground);
@@ -86,7 +87,7 @@ body {
 
 input[type="time"] {
   border: none;
-  color: #2a2c2d;
+  color: black;
   font-size: 14px;
   width: 155px;
 }
@@ -106,6 +107,7 @@ input[type="time"]::-webkit-datetime-edit-hour-field {
   align-items: center;
   width: 20px;
   background-color: #f2f4f5;
+  color: black;
   padding: 4px 8px;
   border-radius: 10%;
 }
@@ -117,6 +119,7 @@ input[type="time"]::-webkit-datetime-edit-minute-field {
   align-items: center;
   width: 20px;
   background-color: #f2f4f5;
+  color: black;
   padding: 4px 8px;
   border-radius: 10%;
 }

@@ -45,10 +45,13 @@ export default function ProfileForm({ name, bio }) {
           </p>
         </div>
       )}
-      <div id="UserForm" className="posts-container">
-        <h1 className="text-3xl font-semibold">update profile</h1>
+      <div id="UserForm" className="posts-container p-3 md:p-4 lg:p-6">
+        <h1 className="text-2xl md:text-3xl font-semibold">update profile</h1>
         <form action={action} className="flex flex-col gap-4">
-          <label htmlFor="username" className="font-normal capitalize">
+          <label
+            htmlFor="username"
+            className="text-sm md:text-base font-normal capitalize"
+          >
             username
           </label>
           <input
@@ -58,9 +61,12 @@ export default function ProfileForm({ name, bio }) {
             placeholder="enter username ..."
             defaultValue={name}
             required
-            className="border border-[#333333] p-2 rounded-md focus:border-blue-500 focus:outline-none focus:ring-0"
+            className="text-sm md:text-base border border-[#333333] p-2 rounded-md focus:border-blue-500 focus:outline-none focus:ring-0"
           />
-          <label htmlFor="password" className="font-normal capitalize">
+          <label
+            htmlFor="password"
+            className="text-sm md:text-base font-normal capitalize"
+          >
             password
           </label>
           <input
@@ -68,9 +74,12 @@ export default function ProfileForm({ name, bio }) {
             type="password"
             name="password"
             placeholder="enter password ..."
-            className="border border-[#333333] p-2 rounded-md focus:border-blue-500 focus:outline-none focus:ring-0"
+            className="text-sm md:text-base border border-[#333333] p-2 rounded-md focus:border-blue-500 focus:outline-none focus:ring-0"
           />
-          <label htmlFor="bio" className="font-normal capitalize">
+          <label
+            htmlFor="bio"
+            className="text-sm md:text-base font-normal capitalize"
+          >
             bio
           </label>
           <textarea
@@ -79,14 +88,14 @@ export default function ProfileForm({ name, bio }) {
             rows="7"
             defaultValue={bio}
             placeholder="enter bio ..."
-            className="border border-[#333333] p-2 rounded-md focus:border-blue-500 focus:outline-none focus:ring-0"
+            className="text-sm md:text-base border border-[#333333] p-2 rounded-md focus:border-blue-500 focus:outline-none focus:ring-0"
           />
 
           <button
             disabled={isPending}
-            className="btn py-4 px-7 rounded-md self-baseline transition-colors"
+            className="btn text-sm md:text-base py-4 px-7 rounded-md self-baseline transition-colors"
           >
-            {isPending ? "updating ..." : "udpate"}
+            {isPending ? "updating ..." : "update"}
           </button>
         </form>
       </div>

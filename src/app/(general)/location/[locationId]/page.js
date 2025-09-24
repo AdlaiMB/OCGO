@@ -21,6 +21,20 @@ export default async function Page({ params }) {
     description,
     hours,
   } = await getLocationByLocationId(locationId);
+
+  if (!location_name) {
+    return (
+      <div
+        id="Location"
+        className="flex flex-col gap-10 max-w-[1700px] px-2 md:px-10 mt-14 mx-auto"
+      >
+        <div className="posts-container p-3 md:p-4 lg:p-6 gap-2">
+          <h1 className="text-2xl md:text-3xl">Location not found!</h1>
+        </div>
+      </div>
+    );
+  }
+
   const comments = await getCommentsByLocationId(locationId);
 
   const session = await auth();
