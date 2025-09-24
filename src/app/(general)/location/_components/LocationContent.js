@@ -23,7 +23,7 @@ export default function LocationContent({
     "sunday",
   ];
 
-  const currentDay = days[new Date().getDay()];
+  const currentDay = days[(new Date().getDay() - 1) % 7];
   const hours = {};
 
   const convertToSTDTime = (time) => {
