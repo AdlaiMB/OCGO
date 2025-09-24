@@ -1,13 +1,12 @@
 "use client";
 
-import { useActionState, useEffect } from "react";
+import { useActionState, useEffect, use } from "react";
 import { useSearchParams, useRouter } from "next/navigation";
 
 import { serverActionCreateComment } from "@/lib/actions";
 
-export default function Page() {
-  const searchParams = useSearchParams();
-  const locationId = searchParams.get("location_id");
+export default function Page({ searchParams }) {
+  const { location_id } = use(searchParams);
 
   const [state, action, isPending] = useActionState(
     serverActionCreateComment,
@@ -47,7 +46,7 @@ export default function Page() {
       <div id="CommentForm" className="posts-container p-3 md:p-4 lg:p-6">
         <h1 className="text-2xl md:text-3xl font-semibold">post comment</h1>
         <form action={action} className="flex flex-col gap-4">
-          <input type="hidden" name="location_id" defaultValue={locationId} />
+          <input type="hidden" name="location_id" defaultValue={location_id} />
           <label
             htmlFor="comment"
             className="text-sm md:text-base font-normal capitalize"
