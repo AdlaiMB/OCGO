@@ -4,7 +4,7 @@ import argon2 from "argon2";
 import { AuthError } from "next-auth";
 
 import { signIn, signOut } from "@/auth";
-import sql from "@/db";
+import sql from "@/db/db";
 import { verifySession, getCommentOwnerId, getLocationOwnerId } from "./dal";
 import {
   signUpUserFormSchema,

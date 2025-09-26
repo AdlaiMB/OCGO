@@ -2,7 +2,7 @@ import "server-only";
 
 import { redirect } from "next/navigation";
 
-import sql from "@/db";
+import sql from "@/db/db";
 import { auth } from "@/auth";
 
 export const verifySession = async () => {
